@@ -21,10 +21,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __GNUC__
 #include <unistd.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if  (defined _MSC_VER) | (defined __CC_ARM)
+typedef long ssize_t;
 #endif
 
 /*---------------------------------------------------------------------------

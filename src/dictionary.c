@@ -9,25 +9,45 @@
    informations retrieved from a configuration file (ini files).
 */
 /*--------------------------------------------------------------------------*/
-
+/**
+ * * @par Change Logs:
+ *      2019/11/12 -- Linghu -- Add ENDL for config stdout end of line.
+ */
 /*---------------------------------------------------------------------------
                                 Includes
  ---------------------------------------------------------------------------*/
+
+#ifdef   APP_CFG
+#include APP_CFG                // Apps configuration
+#endif
+
 #include "dictionary.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __GNUC__
 #include <unistd.h>
+#endif
 
 /** Maximum value size for integers and doubles. */
-#define MAXVALSZ    1024
+#ifndef MAXVALSZ
+#define MAXVALSZ            1024
+#endif
 
 /** Minimal allocated number of entries in a dictionary */
-#define DICTMINSZ   128
+#ifndef INI_DICTMINSZ
+#define INI_DICTMINSZ       64
+#endif
 
 /** Invalid key token */
+#ifndef DICT_INVALID_KEY
 #define DICT_INVALID_KEY    ((char*)-1)
+#endif
+
+#ifndef ENDL
+#define ENDL                "\r\n"  //!< (C) End of line, start the new line
+#endif
 
 /*---------------------------------------------------------------------------
                             Private functions
@@ -151,8 +171,8 @@ dictionary * dictionary_new(size_t size)
 {
     dictionary  *   d ;
 
-    /* If no size was specified, allocate space for DICTMINSZ */
-    if (size<DICTMINSZ) size=DICTMINSZ ;
+    /* If no size was specified, allocate space for INI_DICTMINSZ */
+    if (size < INI_DICTMINSZ) size = INI_DICTMINSZ ;
 
     d = (dictionary*) calloc(1, sizeof *d) ;
 
@@ -366,12 +386,12 @@ void dictionary_dump(const dictionary * d, FILE * out)
 
     if (d==NULL || out==NULL) return ;
     if (d->n<1) {
-        fprintf(out, "empty dictionary\n");
+        fprintf(out, "empty dictionary"ENDL);
         return ;
     }
     for (i=0 ; i<d->size ; i++) {
         if (d->key[i]) {
-            fprintf(out, "%20s\t[%s]\n",
+            fprintf(out, "%20s\t[%s]"ENDL,
                     d->key[i],
                     d->val[i] ? d->val[i] : "UNDEF");
         }
